@@ -1,5 +1,3 @@
-from types import List
-
-class Plot():
-    def __init__(self, marks: List):
+class Plot:
+    def __init__(self, marks):
         self.marks = marks

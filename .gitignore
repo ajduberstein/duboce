@@ -31,3 +31,6 @@ env/
 *.*.swo
 *.swp
 ignore__*
+duboce/static/bundle.js
+__pycache__/
+duboce/static/bundle.js*
