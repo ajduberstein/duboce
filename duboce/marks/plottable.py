@@ -1,5 +1,6 @@
 import jinja2
 import json
+import pathlib
 
 
 def in_jupyter():
@@ -20,13 +21,13 @@ output_template = jinja2.Template(
       <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
       <title>Duboce</title>
       <script>{{js_bundle}}</script>
-      <script>
-        const chart = JSONConverter.convert({{config}});
-        document.body.append(chart.plot());
-      </script>
     </head>
     <body>
     </body>
+    <script>
+      const chart = jsonConverter.convert({{config}});
+      document.body.append(chart.plot());
+    </script>
   </html>
   """
 )
@@ -49,10 +50,15 @@ class Plottable:
         self.__dict__["@@type"] = get_class_name(str(self.__class__))
 
     def plot(self):
-        RELPATH_TO_BUNDLE = "../static/bundle.js"
-        rendered_html = output_template.render(
-            data=self.data, js_bundle=RELPATH_TO_BUNDLE
+        RELPATH_TO_BUNDLE = (
+            pathlib.Path(__file__).parent.resolve() / "../static/bundle.js"
         )
+        rendered_html = None
+        with open(RELPATH_TO_BUNDLE) as f:
+            js_bundle = f.read()
+            rendered_html = output_template.render(
+                config=json.dumps(self.__dict__), js_bundle=js_bundle
+            )
         if in_jupyter():
             from IPython import HTML
 
